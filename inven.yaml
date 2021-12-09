@@ -1,0 +1,21 @@
+---
+
+- name: inventory create
+  hosts: localhost # local install
+  gather_facts: false
+  ignore_errors: true
+  tasks:
+
+  - name: file create
+    file: 
+      path: /root/cust_inven.lst
+      state: touch
+    tags: step1
+    
+  - name: edit file
+    lineinfile:
+      path: /root/cust_inven.lst
+      # change char
+      regexp: "10.0.0.10"
+      line: "10.0.0.20"
+    tags: step2

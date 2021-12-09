@@ -1,0 +1,39 @@
+---
+- name: create inventory
+  hosts: localhost
+  gather_facts: false
+  ignore_errors: true
+  tasks:
+    - name: create file
+      file:
+        path: /root/cus_inv.lst
+        state: touch
+      tags: t1
+
+    - name: edit file block
+      blockinfile:
+        path: /root/cus_inv.lst
+        block: |
+          [all]
+          10.0.0.10
+          10.0.0.20
+          10.0.0.21
+          10.0.0.22
+
+          [nodes]
+          10.0.0.20
+          10.0.0.21
+          10.0.0.22
+
+          [cont]
+          10.0.0.10
+
+          [web]
+          10.0.0.20
+
+          [was]
+          10.0.0.21
+
+          [db]
+          10.0.0.22
+      tags: t3

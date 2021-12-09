@@ -1,0 +1,17 @@
+---
+
+# for setting
+- name:
+  hosts: localhost
+  gather_facts: false
+  ignore_errors: true
+
+  tasks:
+  - name: user add
+    user:
+      name: "{{ item.name }}" 
+      password: "{{ item.password | password_hash('sha512') }}"
+    with_items:
+      - {name: 'aaa' , password: 'It1'}
+      - {name: 'bbb' , password: 'It2'}  
+

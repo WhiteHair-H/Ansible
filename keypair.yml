@@ -1,0 +1,12 @@
+---
+
+- name: keypair create & deploy
+  hosts: localhost
+  gather_facts: false
+  ignore_errors: true
+  tasks:
+
+  - name: create keypair
+    connection: cont
+    command: "ssh-keygen -b 2048 -t rsa -f .ssh/id_rsa -q -N ''"
+    run_once: true    

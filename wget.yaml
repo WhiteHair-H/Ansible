@@ -1,0 +1,12 @@
+---
+
+- name: get url wordpress
+  hosts: localhost
+  gather_facts: false
+  ignore_errors: true
+
+  tasks:
+    - name: get_url
+      get_url:
+        url: "https://ko.wordpress.org/latest-ko_KR.tar.gz"
+        dest: "./"

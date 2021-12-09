@@ -1,0 +1,98 @@
+
+---
+- name: Wordpress Install & Configuration
+  hosts: web
+  gather_facts: false
+  ignore_errors: true
+
+  tasks:
+  - name: install httpd
+    yum:
+      name: 'httpd'
+      state: latest
+    tags: step-httpd
+
+  - name: php7.2 enable
+    command: 'amazon-linux-extras enable php7.2'
+
+  - name: lamp enable
+    command: 'amazon-linux-extras enable lamp-mariadb10.2-php7.2'
+
+  - name: lamp install
+    yum:
+      name:
+        - php-cli
+        - php-pdo
+        - php-fpm
+        - php-json
+        - php-mysqlnd
+        - mariadb
+        - php
+      state: present
+
+  - name: get_url wordpress
+    get_url:
+      url: 'https://ko.wordpress.org/latest-ko_KR.tar.gz'
+      dest: './'
+
+  - name: excute tar
+    command: 'tar xvfz wordpress-5.8.2-ko_KR.tar.gz'
+
+    #  - name: file copy
+    #    copy: 
+    #      src: 'wordpress/*'
+    #      dest: '/var/www/html/*'
+    #
+    #  - name: chown 
+    #    file:
+    #      path: '/var/www/html/*'
+    #      owner: 'apache'
+    #      group: 'apache'
+    #
+    #  - name: file copy wp-config.php
+    #    copy: 
+    #      src: '/var/www/html/wp-config-sample.php'
+    #      dest: '/var/www/html/wp-config.php'
+  - name: file copy
+    shell: 'cp -a wordpress/* /var/www/html/'
+
+  - name: chown
+    shell: 'chown -R apache.apache /var/www/html'
+
+  - name: file copy
+    shell: 'cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php'
+
+  - name: file edit httpd.conf
+    replace:
+      path: '/etc/httpd/conf/httpd.conf'
+      regexp: 'DirectoryIndex index.html'
+      replace: 'DirectoryIndex index.php'
+
+  - name: file edit wp-config.php
+    replace:
+      path: '/var/www/html/wp-config.php'
+      regexp: 'database_name_here'
+      replace: 'mydb'
+
+  - name: file edit wp-config.php
+    replace:
+      path: '/var/www/html/wp-config.php'
+      regexp: 'username_here'
+      replace: 'admin'
+
+  - name: file edit wp-config.php
+    replace:
+      path: '/var/www/html/wp-config.php'
+      regexp: 'password_here'
+      replace: 'It12345!'
+
+  - name: file edit wp-config.php
+    replace:
+      path: '/var/www/html/wp-config.php'
+      regexp: 'localhost'
+      replace: 'mydb.cqep7uwq9udb.ap-northeast-2.rds.amazonaws.com'
+
+  - name: httpd start
+    systemd:
+      name: httpd
+      state: started
